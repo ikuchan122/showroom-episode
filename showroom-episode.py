@@ -134,36 +134,40 @@ def main():
 
     python3 showroom-episode.py [url]
     '''
+    help_msg = dedent(main.__doc__)
 
     # Check cli arguments
     if len(sys.argv) < 2:
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
     arg = sys.argv[1]
     if arg == '--help' or arg == '-H':
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
     # Validate input url
     episode_url = str(arg)
     if not isValidUrl(episode_url):
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
+    # Fetch episode page html
     print('\nFetching episode info...')
     title = getEpisodeTitle(episode_url)
     if not title:
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
+    # Get episode id
     episode_id = getEpisodeId(episode_url)
     if not episode_id:
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
-    streaming_url = getStreamingUrl(episode_id)
-
+    # Get m3u8 chunklist url
     print('\nParsing m3u8 playlist data...')
+    streaming_url = getStreamingUrl(episode_id)
     chunklist_url = getChunkList(streaming_url)
     if not chunklist_url:
-        return print(dedent(main.__doc__))
+        return print(help_msg)
 
+    # Download begins
     print('\nDownload begins...')
     isSuccess = download(chunklist_url=chunklist_url, title=title)
     if isSuccess:
